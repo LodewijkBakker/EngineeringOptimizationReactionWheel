@@ -1,6 +1,6 @@
 function [sigma_t, sigma_b, sigma_total] = flywheelStress(rho, R, omega, n, t)
 
-    % Calculate
+    % Calculate flywheel rim stress (assumes rectangular crosssection!)
     % Inputs:
     %   rho - Density of material (kg/m^3)
     %   R - Mean radius of flywheel (m)
