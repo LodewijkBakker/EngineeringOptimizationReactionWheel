@@ -13,12 +13,12 @@ function [sigma_t, sigma_b, sigma_total] = flywheelStress(rho, R, omega, n, t)
     %   sigma_b  - Bending stress due to arm restraint (Pa)
     %   sigma_total - Total combined stress (Pa)
 
-    %Hoop Stress
+    % Hoop Stress
     sigma_t = rho * (R^2) * (omega^2);
 
-    %Calculate Bending Stress
+    % Calculate Bending Stress
     sigma_b = (19.74 * rho * (omega^2) * (R^3)) / ((n^2) * t);
 
-    % 3. Calculate Total Stress
+    % Calculate Total Stress
     sigma_total = sigma_t + sigma_b;
 end
