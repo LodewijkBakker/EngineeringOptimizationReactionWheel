@@ -1,6 +1,5 @@
-function [rot_energy] = rotational_energy(t_ring,D,b1,b2,rho,W,n, Omega)
-%ROTATIONAL_ENERGY Summary of this function goes here
-%   Detailed explanation goes here
+function [rot_energy] = rotational_energy(t_ring,D,b1,b2,rho,W,n,Omega)
+
 arguments (Input)
     t_ring % radial thickness [m]
     D % Diameter_wheel [m]
@@ -25,7 +24,7 @@ I_ring = 0.5*M_ring*(D^2 + (D-t_ring)^2);
 % the spokes, assuming that it is possible to meet at one point
 % b1 must therefore not be sufficiently thick if n spokes > 2
 % L_spoke = D-t_ring;
-L_spoke = D-t_ring - tan(pi/n)*2/b1; % actual L if joining is taken into account
+L_spoke = D-t_ring - b1/(2*tan(pi/n)); % actual L if joining is taken into account
 M_spoke_rect = rho*L_spoke*b2*W;
 I_spoke_rect = (1/12)*(M_spoke_rect)*(4*L_spoke^2  + b2^2); %  moment of inertia for the rectungular part
 M_spoke_triangle = rho*0.5*L_spoke*(b1-b2)*W;
