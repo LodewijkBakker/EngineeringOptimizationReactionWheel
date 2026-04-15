@@ -138,3 +138,38 @@ ylabel('Rim Width b2 [m]');
 zlabel('Max Arm Stress [MPa]');
 title(sprintf('Arm Stress Taper Optimization (%d RPM)', RPM_fixed));
 view(135, 30); % Set a nice default 3D viewing angle
+
+
+
+%% --- ME46060: INITIAL INVESTIGATION PLOT ---
+% Purpose: Visualize Energy vs. Diameter and Rotational Speed
+
+% 1. Fixed Design Constants
+t_ring = 0.05; b1 = 0.05; b2 = 0.02; rho = 7850; W = 0.08; n = 6;
+
+% 2. Create Grid for Two Continuous Variables [cite: 34]
+D_vec = linspace(0.5, 3.0, 50);      % Diameter range [m]
+RPM_vec = linspace(1000, 10000, 50); % RPM range
+
+[D_grid, RPM_grid] = meshgrid(D_vec, RPM_vec);
+E_grid = zeros(size(D_grid));
+
+% 3. Calculate Energy for the Landscape
+for i = 1:size(D_grid, 1)
+    for j = 1:size(D_grid, 2)
+        Omega = (RPM_grid(i,j) * 2 * pi) / 60;
+        E_grid(i,j) = rotational_energy(t_ring, D_grid(i,j), b1, b2, rho, W, n, Omega);
+    end
+end
+
+% 4. Visualization 
+figure('Color', 'w');
+contourf(D_grid, RPM_grid, E_grid/1e6, 20, 'LineColor', 'none');
+colorbar;
+xlabel('Outer Diameter D [m]');
+ylabel('Rotational Speed [RPM]');
+title('Flywheel Rotational Energy [MJ]');
+hold on;
+
+% Example: Overlay a simple "Boundedness" marker 
+text(2.0, 8000, 'Increasing Energy \rightarrow', 'Color', 'white', 'FontWeight', 'bold');

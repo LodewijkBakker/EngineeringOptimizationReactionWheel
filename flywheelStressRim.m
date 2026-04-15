@@ -18,10 +18,10 @@ function [ sigma_total, sigma_t, sigma_b] = flywheelStressRim(rho, D, Omega, n, 
     %   sigma_total - Total combined stress (Pa)
 
     % Hoop Stress
-    sigma_t = rho * (R^2) * (Omega.^2);
+    sigma_t = rho * (R.^2) * (Omega.^2);
 
     % Calculate Bending Stress
-    sigma_b = (19.74 * rho * (Omega.^2) * (R^3)) / ((n^2) * t_ring);
+    sigma_b = (19.74 * rho * (Omega.^2) * (R.^3)) / ((n.^2) * t_ring);
 
     % Calculate Total Stress
     sigma_total = sigma_t + sigma_b;
