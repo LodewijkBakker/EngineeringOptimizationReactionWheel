@@ -171,3 +171,11 @@ ylabel('b2 (Rim Width) [mm]', 'FontWeight', 'bold');
 zlabel('Stress [MPa]', 'FontWeight', 'bold');
 title('Structural Topology: Faceted Stress Landscape', 'FontSize', 12);
 grid on;
+
+
+
+
+
+
+
+
