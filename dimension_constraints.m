@@ -1,4 +1,4 @@
-function [correct_geometry, L_spoke] = draw_reaction_wheel_3D(t_ring, D, b1, b2, W, n)
+function [correct_geometry, L_spoke, r_hub] = draw_reaction_wheel_3D(t_ring, D, b1, b2, W, n)
     arguments (Input)
         t_ring % radial thickness [m]
         D % Diameter_wheel [m]
@@ -10,31 +10,37 @@ function [correct_geometry, L_spoke] = draw_reaction_wheel_3D(t_ring, D, b1, b2,
     arguments (Output)
         correct_geometry
         L_spoke
+        r_hub
     end
 
     correct_geometry = true;
     L_spoke = 0;
+    r_hub = 0;
     
     % its done seperately so each of these errors can be dealt with
     % individually
-    if t_ring < D
+    if t_ring > D
         correct_geometry = false;
         return
-    elseif L_spoke < D
+    elseif L_spoke > D
         correct_geometry = false;
         return 
-    elseif r_hub < R
+    elseif r_hub > D/2
         correct_geometry = false;
         return 
-    elseif b1 < D
+    elseif b1 > D
         correct_geometry = false;
         return
-    elseif b2 < D
+    elseif b2 > D
         correct_geometry = false;
         return
     end
   
-    L_spoke = D-t_ring - tan(pi/n)*2/b1; % actual L if joining is taken into account
+    %L_spoke = D-t_ring - tan(pi/n)*2/b1; % actual L if joining is taken into account
+   
+    r_hub = b1/(2*tan(pi/n));
+    L_spoke = D - t_ring - r_hub;
+
     end
 %rules
 % t_ring < D;

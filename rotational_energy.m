@@ -1,4 +1,4 @@
-function [rot_energy] = rotational_energy(t_ring,D,b1,b2,rho,W,n,Omega)
+function [specific_rot_energy, rot_energy] = rotational_energy(t_ring,D,b1,b2,rho,W,r_hub,n,Omega)
 
 arguments (Input)
     t_ring % radial thickness [m]
@@ -12,6 +12,7 @@ arguments (Input)
 end
 
 arguments (Output)
+    specific_rot_energy
     rot_energy
 end
 
@@ -28,6 +29,7 @@ L_spoke = D-t_ring - b1/(2*tan(pi/n)); % actual L if joining is taken into accou
 M_spoke_rect = rho*L_spoke*b2*W;
 I_spoke_rect = (1/12)*(M_spoke_rect)*(4*L_spoke^2  + b2^2); %  moment of inertia for the rectungular part
 M_spoke_triangle = rho*0.5*L_spoke*(b1-b2)*W;
+M_spoke = M_spoke_triangle + M_spoke_rect;
 
 z = 0.5*(b1-b2)/L_spoke;
 L = 0.5*(b1-b2)/(z/((z^2 + 1)^0.5)); % hypotenuse of spoke
@@ -40,8 +42,9 @@ M_inner_polygon = rho*0.5*R_inner_polygon^2*n*sin(2*pi/n)*W;
 I_inner_polygon = 0.5*M_inner_polygon*R_inner_polygon^2*(1- 2/3 * sin(pi/n)^2);
 
 I_total = I_ring + I_spoke*n + I_inner_polygon;
+M_total = M_inner_polygon + M_spoke*n + M_ring;
 
 rot_energy = 0.5*I_total*Omega^2; % in joules
-
+specific_rot_energy = rot_energy / M_total;
 
 end

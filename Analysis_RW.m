@@ -5,6 +5,7 @@ t_ring = 0.2;      % 20cm ring thickness [m]
 W = 0.08;           % 8cm out-of-plane thickness [m]
 n = 5;              % 6 spokes
 k = 1000;            % Number of points to check
+
 b1 = 0.1;
 b2 = 0.1;
 
@@ -16,5 +17,7 @@ T = 1000;           % 1000 Nm Torque
 r_hub = 0.5;        % 50cm hub radius [m]
 
 [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b1, b2, W, n);
-r_hub = b1/(2*tan(pi/n));
 draw_reaction_wheel(t_ring, r_hub, D, b1, b2, W, n);
+
+
+% gradient method 
