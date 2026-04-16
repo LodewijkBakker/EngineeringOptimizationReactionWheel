@@ -1,4 +1,4 @@
-function draw_reaction_wheel_3D(t_ring, D, b1, b2, W, n)
+function draw_reaction_wheel(t_ring, D, b1, b2, W, n)
     arguments (Input)
 
         t_ring % radial thickness [m]
