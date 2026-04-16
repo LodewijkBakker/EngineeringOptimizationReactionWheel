@@ -1,4 +1,4 @@
-function [rot_energy, M_total] = rotational_energy_new(t_ring, D, b1, b2, rho, W, n, Omega)
+function [specific_rot_energy, rot_energy, M_total] = rotational_energy_new(t_ring, D, b1, b2, rho, W, n, Omega)
     % --- 1. Geometric Dependency Calculation ---
     Ro = D/2;                       % Outer Radius
     Ri = Ro - t_ring;               % Inner Rim Radius (Spoke Endpoint)

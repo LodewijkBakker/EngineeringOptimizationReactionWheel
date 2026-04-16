@@ -14,10 +14,10 @@ D_fixed     = 0.400;
 Omega_fixed = 6000 * (2*pi/60); 
 
 
-% Steepest descent optimization loop parameters
+% Steepest ascent optimization loop parameters
 x = [0.025, 0.025];   %initial point (Design variable vector [b1, b2]) 
-step_size = 5e-4;   
-max_iter = 2500;
+step_size = 5e-5;   
+max_iter = 4000;
 history_x = x;          
 history_J = [];
 h = 1e-6; % gradient step size
@@ -25,8 +25,14 @@ grad = zeros(1, 2);
 
 for k = 1:max_iter
     J_now = penalized_objective_2D(x, rho, W, n, Sy, t_rim_fixed, D_fixed, Omega_fixed);
-    history_J = [history_J; J_now];
+   
+    if k > 1 && abs(J_now - history_J(end)) < 1e-4 %Checking if there is still meaningful change in the objective
+        fprintf('Optimization Stalled (Converged) at iteration %d\n', k);
+        break;
+    end
 
+    history_J = [history_J; J_now];
+    
 
     for i = 1:2 %Loop over all design variables (directions)
         xn = x;
@@ -34,9 +40,15 @@ for k = 1:max_iter
         J_nudge = penalized_objective_2D(xn, rho, W, n, Sy, t_rim_fixed, D_fixed, Omega_fixed);
         grad(i) = (J_nudge - J_now) / h; %calculate gradient for design variable
     end
-
-    direction = grad / norm(grad);
-    x = x + (step_size * direction); %calculate the direction vector, and move there with step size
+    
+    gnorm = norm(grad);
+    if gnorm < 1e-6  % Terminate if an extremum is found
+        fprintf('Peak reached at iteration %d\n', k);
+        break; 
+    end
+    direction = grad / gnorm;
+    current_step = step_size * (1 - k*0.995/(max_iter)); % decrease the step size, with each iteration, but not smaller than 0.5% of the original step size
+    x = x + (current_step * direction); %calculate the direction vector, and move there with step size
     history_x = [history_x; x];
 end
 
@@ -54,10 +66,10 @@ function J_aug = penalized_objective_2D(x, rho, W, n, Sy, t_rim, D, Omega)
 
     sig_arm = armMaxStress(t_rim, D, b1, b2, rho, W, n, Omega, r_hub, 60, 0);
 
-    P1 = 1 * exp(40 * (sig_arm/Sy - 1)); %Penalty function - exponential growth, when sig_arm hits specified Sy
+    scale = 0.5; 
+    sharpness = 20; 
 
-    scale = 1; 
-    sharpness = 50; 
+    P1 = scale * exp(sharpness * (sig_arm/Sy - 1)); %Penalty function - exponential growth, when sig_arm hits specified Sy
     P2 = scale * exp(sharpness * (x(1)/(0.2*D) - 1)); % Penalty for b1 > D/2
     P3 = scale * exp(sharpness * (x(2)/(0.2*D) - 1)); % Penalty for b2 > D/2
     J_aug = norm_spec_e - P1 - P2 - P3; % Modified objectife function
@@ -71,9 +83,9 @@ end
 %-------------------------------------------------------------------
 
 % --- Generate Topographic Mesh ---
-res = 50; 
-b1_grid = linspace(0.001, 0.05, res); % Increased range slightly to see the peak
-b2_grid = linspace(0.001, 0.05, res);
+res = 100; 
+b1_grid = linspace(0.001, 0.2, res); % Increased range slightly to see the peak
+b2_grid = linspace(0.001, 0.2, res);
 [B1, B2] = meshgrid(b1_grid, b2_grid);
 J_total_mesh = zeros(size(B1));
 
@@ -82,7 +94,7 @@ for i = 1:res
     for j = 1:res
         J_val = penalized_objective_2D([B1(i,j), B2(i,j)], rho, W, n, Sy, t_rim_fixed, D_fixed, Omega_fixed);
         % Clip very low penalty values to -0.2 for better Z-axis scaling
-        J_total_mesh(i,j) = max(J_val, -0.2); 
+        J_total_mesh(i,j) = max(J_val, -3); 
     end
 end
 fprintf('Done.\n');
@@ -100,13 +112,13 @@ cb = colorbar; ylabel(cb, 'J_{total} (Normalized)');
 hold on;
 
 % B. Draw Trajectory Path (Offset reduced to 0.05 for normalized scale)
-h_path = plot3(history_x(:,1)*1000, history_x(:,2)*1000, history_J + 0.05, ...
+h_path = plot3(history_x(:,1)*1000, history_x(:,2)*1000, history_J + 0.001, ...
     'k-o', 'LineWidth', 1.5, 'MarkerSize', 3, 'MarkerFaceColor', 'w');
 
 % C. Start and End Markers (Offset reduced to 0.1 for normalized scale)
-h_start = plot3(history_x(1,1)*1000, history_x(1,2)*1000, history_J(1) + 0.1, ...
+h_start = plot3(history_x(1,1)*1000, history_x(1,2)*1000, history_J(1) + 0.01, ...
     'go', 'MarkerSize', 10, 'MarkerFaceColor', 'g'); 
-h_end = plot3(x(1)*1000, x(2)*1000, history_J(end) + 0.1, ...
+h_end = plot3(x(1)*1000, x(2)*1000, history_J(end) + 0.01, ...
     'ro', 'MarkerSize', 12, 'MarkerFaceColor', 'r', 'MarkerEdgeColor', 'k'); 
 
 % D. Aesthetics
