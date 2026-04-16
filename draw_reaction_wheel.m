@@ -10,14 +10,7 @@ function draw_reaction_wheel_3D(t_ring, r_hub, D, b1, b2, W, n)
         n % amount of spoke, no n is one due to it being unbalanced!!
     end
 
-    disp(D);
-    disp(t_ring);
-    disp(b1);
-    disp(b2);
-    disp(pi/n)
-    disp(string(tan(pi/n)) + 'tan')
-    L_spoke = D-t_ring - tan(pi/n)*2/b1; % actual L if joining is taken into account
-    disp(L_spoke);
+
     %r_hub = D-L_spoke;
 
     R_outer = D/2;
