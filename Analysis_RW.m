@@ -20,7 +20,7 @@ objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_all
 
 % gradient method 
 % simplify so that t_ring does not form the boundary
-step_size = 1e-9;
+step_size = 1e-5;
 dx = 0.01; % size of step for getting gradient
 convergence_norm = 1e-6;  % minimum difference between result to accept results
 convergence_res = 1;
@@ -28,21 +28,21 @@ loops = 0;
 max_loops = 10000;
 prev_res = -1;  % previous result to calculate convergence with
 
-f_obj = @(b1, b2) objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
+f_energy = @(b1, b2) max_energy_for_setup(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
 
 % graph results across 
 b1_vals = linspace(0.001, 0.05, 50);
 b2_vals = linspace(0.001, 0.05, 50);
 [b1_vis, b2_vis] = meshgrid(b1_vals, b2_vals);
-z = arrayfun(f_obj, b1_vis, b2_vis);
+z = arrayfun(f_energy, b1_vis, b2_vis);
 surf(b1_vis, b2_vis, z)
 xlabel('b1');
 ylabel('b2');
 zlabel('specific angular momentum [J/kg]');
-title('Objective Function Surface Plot');
+title('Real Surface Plot');
 colorbar
 
-
+f_obj = @(b1, b2) objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
 while loops < max_loops && convergence_res > convergence_norm
     f_obj_nom = f_obj(b1, b2);
 
