@@ -8,31 +8,30 @@ k = 1000;            % Number of points to check
 
 b1 = 0.04;
 b2 = 0.007;
-
+max_b = min(2*tan(pi/n)*(D/2 - t_ring), D/2) - 0.0001;
 
 %-- fixed parameters
 rho = 2780;         % Steel density [kg/m3]
-T = 1;           % 10 Nm Torque
+T = 0;           % 10 Nm Torque
 max_tensile_stress_allowable = 289e6;  % yield strength
-
 
 objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable)
 
 % gradient method 
 % simplify so that t_ring does not form the boundary
-step_size = 1e-9;
+step_size = 10;
 dx = 0.01; % size of step for getting gradient
 convergence_norm = 1e-11;  % minimum difference between result to accept results
 convergence_res = 1;
 loops = 0;
-max_loops = 10;
+max_loops = 100;
 prev_res = -1;  % previous result to calculate convergence with
 
 f_energy = @(b1, b2) max_energy_for_setup(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
 
 % graph results across 
-b1_vals = linspace(0.001, 0.05, 50);
-b2_vals = linspace(0.001, 0.05, 50);
+b1_vals = linspace(0.001, max_b, 50);
+b2_vals = linspace(0.001, max_b, 50);
 [b1_vis, b2_vis] = meshgrid(b1_vals, b2_vals);
 z = arrayfun(f_energy, b1_vis, b2_vis);
 surf(b1_vis, b2_vis, z)
@@ -51,6 +50,7 @@ f_energy_save = [];
 
 while loops < max_loops && convergence_res > convergence_norm
     f_obj_nom = f_obj(b1, b2);
+
     f_energy_nom = f_energy(b1, b2);
     b1_save(end + 1) = b1;
     b2_save(end + 1) = b2;
@@ -66,8 +66,8 @@ while loops < max_loops && convergence_res > convergence_norm
 
     % update b1 and b2
     % gradient method to find the minimum
-    b1 = b1 + step_size*dfdx1;
-    b2 = b2 + step_size*dfdx2;
+    b1 = b1 - step_size*dfdx1;
+    b2 = b2 - step_size*dfdx2;
 
     disp(string(b1) + " b1 updated")
     disp(string(b2) + " b2 updated")
@@ -84,14 +84,26 @@ scatter3(b1_save,b2_save,f_energy_save)
 draw_reaction_wheel(t_ring, D, b1, b2, W, n);
 
 
+% actual fmincon optimization
 
 vob_f = @(b) objective_function_RW(t_ring, D, b(1), b(2), rho, W, n, k, T, max_tensile_stress_allowable);
 lower_bound = [0.0001, 0.0001];
-upper_bound = [min(2*tan(pi/n)*(D/2 - t_ring)), min(2*tan(pi/n)*(D/2 - t_ring))];
+upper_bound = [max_b, max_b];
 x0 = [0.04, 0.007];
-
+options = optimoptions('fmincon', 'Algorithm','sqp');
 [x,fval] = fmincon(vob_f, x0, [], [], [], [], lower_bound, upper_bound);
 disp(x)
+disp(f_energy(x(1), x(2))) % not a maximum WTF
+
+
+vob_f = @(b) objective_function_RW(t_ring, D, b(1), 0.03, rho, W, n, k, T, max_tensile_stress_allowable);
+lower_bound = [0.0001];
+upper_bound = [0.05];
+x0 = [0.04];
+options = optimoptions('fmincon', 'Algorithm','sqp');
+[x,fval] = fmincon(vob_f, x0, [], [], [], [], lower_bound, upper_bound);
+disp(x)
+disp(f_energy(x, 0.03))
 
 
 
