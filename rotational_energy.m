@@ -1,4 +1,4 @@
-function [specific_rot_energy, rot_energy] = rotational_energy(t_ring,D,b1,b2,rho,W,r_hub,n,Omega)
+function [specific_rot_energy, rot_energy] = rotational_energy(t_ring,D,b1,b2,rho,W,n,Omega)
 
 arguments (Input)
     t_ring % radial thickness [m]
@@ -37,7 +37,7 @@ I_spoke_triangle = 0.5*M_spoke_triangle*L^2*(1-2/3*(z^2/(z^2+1))); % probably ca
 I_spoke = I_spoke_rect + I_spoke_triangle; % basically a split iscoscoles triangle and a square in the middle
 
 % inner polygon
-R_inner_polygon = sin(pi/n)*2/b1;
+R_inner_polygon = sin(pi/n)*2/b1; % this isn't correct
 M_inner_polygon = rho*0.5*R_inner_polygon^2*n*sin(2*pi/n)*W;
 I_inner_polygon = 0.5*M_inner_polygon*R_inner_polygon^2*(1- 2/3 * sin(pi/n)^2);
 

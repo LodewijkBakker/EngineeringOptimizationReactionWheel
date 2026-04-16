@@ -9,23 +9,13 @@ k = 1000;            % Number of points to check
 b1 = 0.02;
 b2 = 0.02;
 
-omega_start = 300; % rad/s
 
 %-- fixed parameters
 rho = 2780;         % Steel density [kg/m3]
 T = 1;           % 10 Nm Torque
 max_tensile_stress_allowable = 289e6;  % yield strength
 
-[correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b1, b2, W, n);
-
-
-% calculate max omega, because the stress function are continues and monotonically taking the max 
-% stress seen overall and finding the root of the function 
-f = @(Omega) max_stress_zeroed(t_ring, D, b1, b2, rho, W, n, Omega, r_hub, k, T, max_tensile_stress_allowable);
-omega = fzero(f, omega_start);
-disp(omega)
-% calculate 
-
+objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable)
 
 %
 draw_reaction_wheel(t_ring, r_hub, D, b1, b2, W, n);
