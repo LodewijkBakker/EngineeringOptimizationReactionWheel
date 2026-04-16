@@ -9,23 +9,27 @@ k = 1000;            % Number of points to check
 b1 = 0.02;
 b2 = 0.02;
 
+
 %-- fixed parameters
 rho = 2780;         % Steel density [kg/m3]
 T = 1;           % 10 Nm Torque
 max_tensile_stress_allowable = 289e6;  % yield strength
 
-[correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b1, b2, W, n);
 
-
-% calculate max omega, because the stress function are continues and monotonically taking the max 
-% stress seen overall and finding the root of the function 
-f = @(Omega) max_stress_zeroed(t_ring, D, b1, b2, rho, W, n, Omega, r_hub, k, T, max_tensile_stress_allowable);
-omega = fzero(f, );
-% calculate 
-
-
-%
-draw_reaction_wheel(t_ring, r_hub, D, b1, b2, W, n);
-
+objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable)
 
 % gradient method 
+% simplify so that t_ring does not form the boundary
+
+step_size = 0.1;
+dx = 0.0001; % size of step for getting gradient
+f_obj = @(b1, b2) objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
+f_obj_nom = f_obj(b1, b2);
+f_obj_x1 = f_obj(b1+dx, b2);
+f_obj_x2 = f_obj(b1, b2+dx);
+dfdx1 = (f_obj_x1 - f_obj_nom)/dx;
+dfdx2 = (f_obj_x2 - f_obj_nom)/dx;
+
+% draw 
+draw_reaction_wheel(t_ring, r_hub, D, b1, b2, W, n);
+

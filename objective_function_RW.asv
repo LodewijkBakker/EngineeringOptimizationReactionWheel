@@ -7,4 +7,7 @@ function [specific_rot_energy] = objective_function_RW(t_ring, D, b1, b2, rho, W
 
     [specific_rot_energy, ~] = rotational_energy(t_ring,D,b1,b2,rho,W,L_spoke,n,omega_max);
 
+    disp(specific_rot_energy)
+
+
 end
