@@ -7,7 +7,7 @@ n = 5;              % 6 spokes
 k = 1000;            % Number of points to check
 
 b1 = 0.04;
-b2 = 0.04;
+b2 = 0.007;
 
 
 %-- fixed parameters
@@ -20,9 +20,9 @@ objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_all
 
 % gradient method 
 % simplify so that t_ring does not form the boundary
-step_size = 1e-5;
+step_size = 1e-9;
 dx = 0.01; % size of step for getting gradient
-convergence_norm = 1e-6;  % minimum difference between result to accept results
+convergence_norm = 1e-11;  % minimum difference between result to accept results
 convergence_res = 1;
 loops = 0;
 max_loops = 10000;
@@ -41,10 +41,20 @@ ylabel('b2');
 zlabel('specific angular momentum [J/kg]');
 title('Real Surface Plot');
 colorbar
+hold on
 
 f_obj = @(b1, b2) objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
+
+b1_save = [];
+b2_save = [];
+f_energy_save = [];
+
 while loops < max_loops && convergence_res > convergence_norm
     f_obj_nom = f_obj(b1, b2);
+    f_energy_nom = f_energy(b1, b2);
+    b1_save(end + 1) = b1;
+    b2_save(end + 1) = b2;
+    f_energy_save(end + 1) = f_energy_nom;
 
     % get gradients
     f_obj_x1 = f_obj(b1+dx, b2);
@@ -66,6 +76,12 @@ while loops < max_loops && convergence_res > convergence_norm
     convergence_res = abs(f_obj_nom - prev_res);
     prev_res = f_obj_nom;
 end
+
+scatter3(b1_save,b2_save,f_energy_save)
+
+vob_f = @(b) vector_objective_function(b, t_ring, D, rho, W, n, k, T, max_tensile_stress_allowable);
+[x,fval] = fminunc(vob_f,[0.04, 0.007]);
+disp(x)
 
 
 
