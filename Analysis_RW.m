@@ -79,7 +79,7 @@ end
 
 scatter3(b1_save,b2_save,f_energy_save)
 
-vob_f = @(b) vector_objective_function(b, t_ring, D, rho, W, n, k, T, max_tensile_stress_allowable);
+vob_f = @(b) objective_function_RW(t_ring, D, b(1), b(2), rho, W, n, k, T, max_tensile_stress_allowable);
 [x,fval] = fminunc(vob_f,[0.04, 0.007]);
 disp(x)
 

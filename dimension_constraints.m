@@ -28,14 +28,18 @@ function [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b
         return
     elseif L_spoke > D || L_spoke <= 0
         correct_geometry = false;
+         disp("L_spoke error")
         return 
     elseif r_hub > D/2 || r_hub <= 0
         correct_geometry = false;
+        disp("r_hub error")
         return 
     elseif b1 > D || b1 <= 0
+        disp("b1 error")
         correct_geometry = false;
         return
     elseif b2 > D || b2 <= 0
+        disp("b2 error")
         correct_geometry = false;
         return
     end
