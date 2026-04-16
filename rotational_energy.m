@@ -27,8 +27,8 @@ I_ring = 0.5*M_ring*(D^2 + (D-t_ring)^2);
 % b1 must therefore not be sufficiently thick if n spokes > 2
 % important b1 can be smaller than b2 or even equal to it. 
 
-t_base = max([b1, b2])-min([b1, b2]);  % triangular base width
-z_hypotenuse= (t_base^2 + L_spoke ^2)^0.5; % hypotenuse of triangle part of spoke
+t_base = max([b1, b2])-min([b1, b2]);  % iscoscoles triangular base width
+z_hypotenuse= ((0.5*t_base)^2 + L_spoke ^2)^0.5; % hypotenuse of triangle part of spoke
 
 M_spoke_rect = rho*L_spoke*min([b1, b2])*W;
 M_spoke_triangle = rho*0.5*L_spoke*t_base*W;
