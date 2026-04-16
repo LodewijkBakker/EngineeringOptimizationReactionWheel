@@ -45,6 +45,29 @@ plot(n_vec, s/1e6, 'o-', 'LineWidth', 1.5); xlabel('n'); ylabel('Max Spoke Stres
 sgtitle(['Nominal: D=200mm, \omega=6000RPM, T=1Nm']);
 
 
+hold off
+
+
+s1 = arrayfun(@(b) armMaxStress(t_nom, D_nom, b, b2_nom, rho, W_nom, n_nom, Omega_nom, r_hub, k, T_nom), b1_vec);
+s2 = arrayfun(@(b) armMaxStress(t_nom, D_nom, b1_nom, b, rho, W_nom, n_nom, Omega_nom, r_hub, k, T_nom), b2_vec);
+ds2 = gradient(s2, b2_vec);
+ds1 = gradient(s1, b1_vec);
+
+figure
+ plot(b2_vec*1000, ds2, 'LineWidth', 1.5); xlabel('b1, b2 [mm]');
+ hold on
+ plot(b1_vec*1000, ds1, 'LineWidth', 1.5); 
+ ylabel("Derivative ds/db2")
+ yline(0)
+ grid on
+ legend ("ds/b1", "ds/b2")
+
+
+
+%% 
+
+
+
 % 3D Visualization of Arm Stress vs. Spoke Widths
 clear; clc;
 
@@ -76,6 +99,22 @@ ylabel('b2 (Rim Width) [mm]');
 zlabel('Max Arm Stress [MPa]');
 title('3D Stress Landscape: Interaction of Spoke Widths');
 grid on;
+
+
+
+
+plot()
+
+
+
+
+
+
+
+
+
+
+
 
 % High-Visibility Topological Visualization of Arm Stress
 clear; clc;

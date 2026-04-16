@@ -48,6 +48,7 @@ while abs(b - a) > tol && iter < 30 % Limit max no. iterations
 end
 
 b2_opt = (a + b) / 2; % Optimal b2 value found at the end of the iterations
+[sigma_min, r_max_stress] = f(b2_opt)
 
 %Plot the optimization process
 figure('Color', 'w', 'Position', [100 100 1000 800]);
