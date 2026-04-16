@@ -25,7 +25,7 @@ dx = 0.01; % size of step for getting gradient
 convergence_norm = 1e-11;  % minimum difference between result to accept results
 convergence_res = 1;
 loops = 0;
-max_loops = 10000;
+max_loops = 10;
 prev_res = -1;  % previous result to calculate convergence with
 
 f_energy = @(b1, b2) max_energy_for_setup(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
@@ -80,12 +80,20 @@ end
 
 scatter3(b1_save,b2_save,f_energy_save)
 
+% draw 
+draw_reaction_wheel(t_ring, D, b1, b2, W, n);
+
+
+
 vob_f = @(b) objective_function_RW(t_ring, D, b(1), b(2), rho, W, n, k, T, max_tensile_stress_allowable);
-[x,fval] = fminunc(vob_f,[0.04, 0.007]);
+lower_bound = [0.0001, 0.0001];
+upper_bound = [min(2*tan(pi/n)*(D/2 - t_ring)), min(2*tan(pi/n)*(D/2 - t_ring))];
+x0 = [0.04, 0.007];
+
+[x,fval] = fmincon(vob_f, x0, [], [], [], [], lower_bound, upper_bound);
 disp(x)
 
 
 
-% draw 
-draw_reaction_wheel(t_ring, D, b1, b2, W, n);
+
 

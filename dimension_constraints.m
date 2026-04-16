@@ -19,6 +19,9 @@ function [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b
 
     % bounds
 
+    % if all the polyong point are the ring this would be the width of a 
+    % face
+    max_b = 2*tan(pi/n)*(D/2 - t_ring);
     % its done seperately so each of these errors can be dealt with
     % individually
     if t_ring > D || t_ring <= 0
@@ -34,25 +37,18 @@ function [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b
         correct_geometry = false;
         disp("r_hub error")
         return 
-    elseif b1 > D || b1 <= 0
+    elseif b1 > D || b1 <= 0 || b1 > max_b
         disp("b1 error")
         correct_geometry = false;
         return
-    elseif b2 > D || b2 <= 0
+    elseif b2 > D || b2 <= 0 || b2 > max_b
         disp(b2)
         disp("b2 error")
         correct_geometry = false;
         return
     end
-  
-    %L_spoke = D-t_ring - tan(pi/n)*2/b1; % actual L if joining is taken into account
-   
+ 
     r_hub = b1/(2*tan(pi/n));
     L_spoke = D/2 - t_ring - r_hub;
 
     end
-%rules
-% t_ring < D;
-% L_spoke < D;
-% r_hub < R;
-% b1 & b2 < D; % probably allot smaller. 
