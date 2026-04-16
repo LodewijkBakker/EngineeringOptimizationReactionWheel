@@ -39,6 +39,7 @@ function [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b
         correct_geometry = false;
         return
     elseif b2 > D || b2 <= 0
+        disp(b2)
         disp("b2 error")
         correct_geometry = false;
         return
@@ -47,7 +48,7 @@ function [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b
     %L_spoke = D-t_ring - tan(pi/n)*2/b1; % actual L if joining is taken into account
    
     r_hub = b1/(2*tan(pi/n));
-    L_spoke = D - t_ring - r_hub;
+    L_spoke = D/2 - t_ring - r_hub;
 
     end
 %rules

@@ -65,6 +65,7 @@ while loops < max_loops && convergence_res > convergence_norm
     disp(dfdx2)
 
     % update b1 and b2
+    % gradient method to find the minimum
     b1 = b1 + step_size*dfdx1;
     b2 = b2 + step_size*dfdx2;
 
