@@ -1,4 +1,4 @@
-function [correct_geometry, L_spoke, r_hub] = draw_reaction_wheel_3D(t_ring, D, b1, b2, W, n)
+function [correct_geometry, L_spoke, r_hub] = dimension_constraints(t_ring, D, b1, b2, W, n)
     arguments (Input)
         t_ring % radial thickness [m]
         D % Diameter_wheel [m]
