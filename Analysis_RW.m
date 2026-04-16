@@ -6,9 +6,10 @@ W = 0.02;           % 2cm out-of-plane thickness [m]
 n = 5;              % 6 spokes
 k = 1000;            % Number of points to check
 
-b1 = 0.04;
-b2 = 0.007;
+
 max_b = min(2*tan(pi/n)*(D/2 - t_ring), D/2) - 0.0001;
+b1 = 0.1;
+b2 = 0.1;
 
 %-- fixed parameters
 rho = 2780;         % Steel density [kg/m3]
@@ -16,6 +17,15 @@ T = 0;           % 10 Nm Torque
 max_tensile_stress_allowable = 289e6;  % yield strength
 
 objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable)
+
+
+
+% check numerical stability
+% spread of data, 
+
+
+
+
 
 % gradient method 
 % simplify so that t_ring does not form the boundary

@@ -19,7 +19,7 @@ k = 100; %arm stress divisions
 f = @(x) -rotational_energy_new(x(1), x(2), x(3), x(4), rho_const, W_const, n_const, omega_const);
 
 %Bounds for optimization:
-ub = [0.5, 2, 0.5, 0.5];
+ub = [0.5, 2, 2, 2];
 lb = [0.002, 0.1, 0.01, 0.001];
 
 
@@ -30,14 +30,20 @@ g1 = @(x) (flywheelStressRim(rho_const, x(2), omega_const, n_const, x(1)) - sigm
 g2 = @(x)  (armMaxStress(x(1), x(2), x(3), x(4), rho_const, W_const, n_const, omega_const, x(3)/(2*tan(pi/n_const)), k, T_nom) - sigma_yield)/sigma_yield;
 
 % g3: Spoke Length constraint
-L_spoke_min = 0.01;% Minimum lenghth of spoke constraint
+L_spoke_min = 0.01;% Minimum length of spoke constraint
 g3 = @(x) ( (x(3)/(2*tan(pi/n_const))) - (x(2)/2 - x(1)) + L_spoke_min ) / L_spoke_min; 
 
-% Rim thickness constraint (t_ring <= 50% of Radius)
+% g4 Rim thickness constraint (t_ring <= 50% of Radius)
 g4 = @(x) x(1) - (0.9 * x(2)/2); 
 
-% g5: MASS BUDGET 
-g5 = @(x) (get_third_output(x, rho_const, W_const, n_const, omega_const) - mass_budget)/mass_budget;
+% g5 maximum of b1
+g5 = @(x) x(3) - 2*tan(pi/n_const)*(x(2)/2 - x(1)) + 0.0001;
+
+% g6 maximum of b2
+g6 = @(x) x(4) - 2*tan(pi/n_const)*(x(2)/2 - x(1)) + 0.0001;
+
+% g7: MASS BUDGET 
+g7 = @(x) (get_third_output(x, rho_const, W_const, n_const, omega_const) - mass_budget)/mass_budget;
 
 function out = get_third_output(x, rho_const, W_const, n_const, omega_const)
     [~, out] = rotational_energy_new(x(1), x(2), x(3), x(4), ...
@@ -45,7 +51,7 @@ function out = get_third_output(x, rho_const, W_const, n_const, omega_const)
 end
 
 % Combine into nonlcon
-nonlcon = @(x) deal([g1(x); g2(x); g3(x); g4(x); g5(x)], []);
+nonlcon = @(x) deal([g1(x); g2(x); g3(x); g4(x); g5(x); g6(x); g7(x);], []);
 
 
 x0 = [0.01, 0.4, 0.03, 0.02]; 
@@ -73,8 +79,10 @@ fprintf('g1 (Rim Stress):   %10.2f Pa (Slack: %10.2f)\n', c_final(1) + sigma_yie
 fprintf('g2 (Arm Stress):   %10.2f Pa (Slack: %10.2f)\n', c_final(2) + sigma_yield, -c_final(2));
 fprintf('g3 (Spoke Length): %10.4f m  (Slack: %10.4f)\n', c_final(3), -c_final(3));
 fprintf('g4 (Rim/Radius):   %10.4f     (Slack: %10.4f)\n', c_final(4), -c_final(4));
-mass_budget_final = g5(x_opt);
-fprintf('g5 (Mass Budget) %.4f kg (Slack: %.4f)\n', mass_budget_final, -mass_budget_final);
+fprintf('g5 (B1):   %10.4f     (Slack: %10.4f)\n', c_final(5), -c_final(5));
+fprintf('g6 (B2):   %10.4f     (Slack: %10.4f)\n', c_final(6), -c_final(6));
+mass_budget_final = g7(x_opt);
+fprintf('g7 (Mass Budget) %.4f kg (Slack: %.4f)\n', mass_budget_final, -mass_budget_final);
 
 
 
