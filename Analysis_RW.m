@@ -6,8 +6,8 @@ W = 0.02;           % 2cm out-of-plane thickness [m]
 n = 5;              % 6 spokes
 k = 1000;            % Number of points to check
 
-b1 = 0.03;
-b2 = 0.03;
+b1 = 0.04;
+b2 = 0.04;
 
 
 %-- fixed parameters
@@ -20,8 +20,14 @@ objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_all
 
 % gradient method 
 % simplify so that t_ring does not form the boundary
-step_size = 1e-6;
+step_size = 1e-9;
 dx = 0.01; % size of step for getting gradient
+convergence_norm = 1e-6;  % minimum difference between result to accept results
+convergence_res = 1;
+loops = 0;
+max_loops = 10000;
+prev_res = -1;  % previous result to calculate convergence with
+
 f_obj = @(b1, b2) objective_function_RW(t_ring, D, b1, b2, rho, W, n, k, T, max_tensile_stress_allowable);
 
 % graph results across 
@@ -37,13 +43,7 @@ title('Objective Function Surface Plot');
 colorbar
 
 
-convergence_norm = 1e-5;  % minimum difference between result to accept results
-convergence_res = -1;
-loops = 0;
-max_loops = 10;
-prev_res = -1;  % previous result to calculate convergence with
-
-while loops < max_loops && convergence_res < convergence_norm
+while loops < max_loops && convergence_res > convergence_norm
     f_obj_nom = f_obj(b1, b2);
 
     % get gradients
@@ -63,7 +63,7 @@ while loops < max_loops && convergence_res < convergence_norm
 
     loops = loops + 1;
     disp(loops)
-    convergence_res = abs(f_obj_nom- prev_res);
+    convergence_res = abs(f_obj_nom - prev_res);
     prev_res = f_obj_nom;
 end
 
