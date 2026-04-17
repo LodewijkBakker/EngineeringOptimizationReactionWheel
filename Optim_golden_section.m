@@ -2,8 +2,13 @@
 clear; clc;
 
 % Initial parameters of the flywheel
-t_nom = 0.020; D_nom = 0.418; b1_nom = 0.030; rho = 7850;
-W_nom = 0.020; n_nom = 5; r_hub = 0.050/(2*tan(pi/n_nom));
+t_nom = 0.015;
+D_nom = 0.400;
+b1_nom = 0.015;
+rho = 7850;
+W_nom = 0.050;
+n_nom = 3;
+r_hub = b1_nom/(2*tan(pi/n_nom));
 T_nom = 1; Omega_nom = 6000 * 2*pi/60; k = 100;
 
 % Make the function only variable with b2
@@ -65,7 +70,7 @@ for i = 1:size(history,1)
     plot(history(i,5)*1000, history(i,7)/1e6, 'd', 'Color', colors(i,:), 'MarkerSize', 5, 'MarkerFaceColor', colors(i,:));
 end
 xlabel('b2 [mm]'); ylabel('Stress [MPa]'); grid on;
-title('Golden Section Evaluation History (x markers)');
+title('Golden Section Evaluation History (markers)');
 
 % Plot segments over time
 subplot(2,1,2); hold on;
@@ -83,10 +88,6 @@ grid on; colormap(jet); cb = colorbar; ylabel(cb, 'Progress');
 figure('Color', 'w', 'Position', [100 100 1200 600]);
 
 
-
-
-draw_reaction_wheel(t_nom, r_hub, D_nom, b1_nom, 0.04, W_nom, n_nom);
-draw_reaction_wheel(t_nom, r_hub, D_nom, b1_nom, b2_opt, W_nom, n_nom);
-
-
-
+draw_reaction_wheel(t_nom, D_nom, b1_nom, b2_opt, W_nom, n_nom);
+disp(b1_nom)
+disp(b2_opt)
