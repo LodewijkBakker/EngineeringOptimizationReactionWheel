@@ -7,7 +7,7 @@ rho_const = 7850;
 W_const = 0.02;   
 n_const = 6;  
 omega_const = 6000*2*pi/60;
-mass_budget = 5;
+mass_budget = 10;
 
 sigma_yield = 1170 *10^6 * 0.5; %yield strenghth of the material - 17-4 PH (H900)
 T_nom = 1; %Nominal torque
