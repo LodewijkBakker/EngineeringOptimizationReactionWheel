@@ -70,13 +70,23 @@ function J_aug = penalized_objective_2D(x, rho, W, n, Sy, t_rim, D, Omega)
 
     sig_arm = armMaxStress(t_rim, D, b1, b2, rho, W, n, Omega, r_hub, 60, 1);
 
-    scale = 1; 
-    sharpness = 40; 
-
-    P1 = scale * exp(sharpness * (sig_arm/Sy - 1)); %Penalty function - exponential growth, when sig_arm hits specified Sy
-    P2 = scale * exp(sharpness * (x(1)/(0.2*D) - 1)); % Penalty for b1 > 0.2*D
-    P3 = scale * exp(sharpness * (x(2)/(0.2*D) - 1)); % Penalty for b2 > 0.2*D
-    J_aug = norm_spec_e - P1 - P2 - P3; % Modified objectife function
+    %barrier func implementation
+    mu = 1e-3;
+    r1 = sig_arm / Sy;
+    r2 = b1 / (0.2 * D);
+    r3 = b2 / (0.2 * D);
+    
+    % Check if ratioswill result in a real ln
+    if r1 < 1 && r2 < 1 && r3 < 1
+        % Barrier functions
+        B1 = mu * log(1 - r1);
+        B2 = mu * log(1 - r2);
+        B3 = mu * log(1 - r3);
+        J_aug = norm_spec_e + B1 + B2 + B3;
+    else
+        % Infeasible state- assign a low constant value
+        J_aug = -5; 
+    end
 end
 
 
