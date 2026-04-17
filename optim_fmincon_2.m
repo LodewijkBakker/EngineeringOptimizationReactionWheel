@@ -7,7 +7,7 @@ rho_const = 7850;
 W_const = 0.02;   
 n_const = 6;  
 omega_const = 6000*2*pi/60;
-mass_budget = 25;
+mass_budget = 5;
 
 sigma_yield = 1170 *10^6 * 0.5; %yield strenghth of the material - 17-4 PH (H900)
 T_nom = 1; %Nominal torque
@@ -16,17 +16,25 @@ k = 100; %arm stress divisions
 
 % 2. Create the function handle
 % We assume x = [t_ring, D, b1, b2]
-f = @(x) -rotational_energy_new(x(1), x(2), x(3), x(4), rho_const, W_const, n_const, omega_const);
+
+
+function out2 = overal_energy(x, rho_const, W_const, n_const, omega_const)
+    [~, out2, ~] = rotational_energy_new(x(1), x(2), x(3), x(4), ...
+                                        rho_const, W_const, n_const, omega_const);
+end
+
+f =  @(x) -overal_energy(x, rho_const, W_const, n_const, omega_const);
+
 
 %Bounds for optimization:
-ub = [0.5, 2, 2, 2];
+ub = [0.5, 0.4, 0.4, 0.4];
 lb = [0.002, 0.1, 0.01, 0.001];
 
 
 %g1 - Rim stress constraint
 g1 = @(x) (flywheelStressRim(rho_const, x(2), omega_const, n_const, x(1)) - sigma_yield)/sigma_yield;
 
-%g2 - Arm stress constrraint
+%g2 - Arm stress constraint
 g2 = @(x)  (armMaxStress(x(1), x(2), x(3), x(4), rho_const, W_const, n_const, omega_const, x(3)/(2*tan(pi/n_const)), k, T_nom) - sigma_yield)/sigma_yield;
 
 % g3: Spoke Length constraint
@@ -46,7 +54,7 @@ g6 = @(x) x(4) - 2*tan(pi/n_const)*(x(2)/2 - x(1)) + 0.0001;
 g7 = @(x) (get_third_output(x, rho_const, W_const, n_const, omega_const) - mass_budget)/mass_budget;
 
 function out = get_third_output(x, rho_const, W_const, n_const, omega_const)
-    [~, out] = rotational_energy_new(x(1), x(2), x(3), x(4), ...
+    [~, ~, out] = rotational_energy_new(x(1), x(2), x(3), x(4), ...
                                         rho_const, W_const, n_const, omega_const);
 end
 
