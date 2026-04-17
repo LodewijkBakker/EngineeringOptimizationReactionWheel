@@ -44,7 +44,7 @@ plot(W_vec*60/(2*pi), s/1e6, 'LineWidth', 1.5); xlabel('Speed [RPM]'); ylabel('M
 subplot(2,3,6); s = arrayfun(@(n) rotational_energy_new(t_nom, D_nom, b1_nom, b2_nom, rho, W_nom, n, Omega_nom), n_vec);
 plot(n_vec, s/1e6, 'o-', 'LineWidth', 1.5); xlabel('n'); ylabel('Max Energy [J/kg]'); title('Variation with n'); grid on;
 
-sgtitle(['Nominal: D=200mm, \omega=6000RPM, T=1Nm']);
+sgtitle(['Specific energy: D=200mm, \omega=6000RPM, T=1Nm']);
 
 
 hold off
@@ -89,7 +89,7 @@ plot(W_vec*60/(2*pi), s/1e6, 'LineWidth', 1.5); xlabel('Speed [RPM]'); ylabel('M
 subplot(2,3,6); s = arrayfun(@(n) overal_energy(t_nom, D_nom, b1_nom, b2_nom, rho, W_nom, n, Omega_nom), n_vec);
 plot(n_vec, s/1e6, 'o-', 'LineWidth', 1.5); xlabel('n'); ylabel('Max Energy [J]'); title('Variation with n'); grid on;
 
-sgtitle(['Overall energy Nominal: D=200mm, \omega=6000RPM, T=1Nm']);
+sgtitle(['Overall energy : D=200mm, \omega=6000RPM, T=1Nm']);
 
 hold off
 
