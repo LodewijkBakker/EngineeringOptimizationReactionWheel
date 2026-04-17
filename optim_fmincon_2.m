@@ -87,14 +87,14 @@ fprintf('Objective Function Value: %.4f\n', -J_opt);
 [c_final, ~] = nonlcon(x_opt);
 
 fprintf('\n--- Constraint Activity Check ---\n');
-fprintf('g1 (Rim Stress):   %10.2f Pa (Slack: %10.2f)\n', c_final(1) + sigma_yield, -c_final(1));
-fprintf('g2 (Arm Stress):   %10.2f Pa (Slack: %10.2f)\n', c_final(2) + sigma_yield, -c_final(2));
-fprintf('g3 (Spoke Length): %10.4f m  (Slack: %10.4f)\n', c_final(3), -c_final(3));
+fprintf('g1 (Rim Stress):   %10.2f Pa (Slack: %10.2f)\n', c_final(1)*sigma_yield + sigma_yield, -c_final(1)*sigma_yield);
+fprintf('g2 (Arm Stress):   %10.2f Pa (Slack: %10.2f)\n', c_final(2)*sigma_yield + sigma_yield, -c_final(2)*sigma_yield);
+fprintf('g3 (Spoke Length): %10.4f m  (Slack: %10.4f)\n', c_final(3)*L_spoke_min, -c_final(3)*L_spoke_min);
 fprintf('g4 (Rim/Radius):   %10.4f     (Slack: %10.4f)\n', c_final(4), -c_final(4));
 fprintf('g5 (B1):   %10.4f     (Slack: %10.4f)\n', c_final(5), -c_final(5));
 fprintf('g6 (B2):   %10.4f     (Slack: %10.4f)\n', c_final(6), -c_final(6));
 mass_budget_final = g7(x_opt);
-fprintf('g7 (Mass Budget) %.4f kg (Slack: %.4f)\n', mass_budget_final, -mass_budget_final);
+fprintf('g7 (Mass Budget) %.4f kg (Slack: %.4f)\n', mass_budget_final*mass_budget, -mass_budget_final*mass_budget);
 
 
 
