@@ -28,7 +28,7 @@ f =  @(x) -overal_energy(x, rho_const, W_const, n_const, omega_const);
 
 %Bounds for optimization:
 ub = [0.5, 0.4, 0.4, 0.4];
-lb = [0.002, 0.1, 0.01, 0.001];
+lb = [0.002, 0.1, 0.0001, 0.0001];
 
 
 %g1 - Rim stress constraint
@@ -63,7 +63,11 @@ nonlcon = @(x) deal([g1(x); g2(x); g3(x); g4(x); g5(x); g6(x); g7(x);], []);
 
 
 x0 = [0.01, 0.4, 0.03, 0.02]; 
-options = optimoptions('fmincon', 'Display', 'iter', 'Algorithm', 'sqp');
+options = optimoptions('fmincon', 'Display', 'iter', 'Algorithm', 'sqp', 'FiniteDifferenceStepSize', 1e-4, 'FiniteDifferenceType', 'central', 'DiffMaxChange', 0.5);
+% diff max change linear search?
+% finitedifferencestepsize is 10e-8
+
+
 
 [x_opt, J_opt] = fmincon(f, x0, [], [], [], [], lb, ub, nonlcon, options);
 
